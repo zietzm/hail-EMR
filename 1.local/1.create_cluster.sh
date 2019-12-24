@@ -25,6 +25,7 @@ aws emr create-cluster \
 > logs/aws_cli_output.json
 
 CLUSTER_ID="$(jq -r '.ClusterId' logs/aws_cli_output.json)"
+echo "Cluster ID: $CLUSTER_ID"
 
 python wait_until_cluster_created.py $CLUSTER_ID
 
@@ -39,6 +40,7 @@ fi
 # Get the server master DNS
 aws emr describe-cluster --cluster-id $CLUSTER_ID > logs/cluster_description.json
 MASTER_DNS="$(jq -r '.Cluster.MasterPublicDnsName' logs/cluster_description.json)"
+echo "Master DNS: $MASTER_DNS"
 
 # Copy relevant files to the server
 scp -i $AWS_KEY -o 'StrictHostKeyChecking no' $AWS_KEY hadoop@$MASTER_DNS:/home/hadoop/.ssh/id_rsa
