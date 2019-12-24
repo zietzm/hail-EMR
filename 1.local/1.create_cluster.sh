@@ -12,10 +12,10 @@ aws emr create-cluster \
 --applications Name=Ganglia Name=Hadoop Name=Spark \
 --name 'tlab-hail' \
 --service-role EMR_DefaultRole \
---auto-scaling-role EMR_AutoScaling_DefaultRole
+--auto-scaling-role EMR_AutoScaling_DefaultRole \
 --release-label emr-5.28.0 \
 --ec2-attributes file://config/ec2_attributes.json \
---ebs-root-volume-size 32
+--ebs-root-volume-size 32 \
 --instance-groups file://config/instance_groups.json \
 --configurations '[{"Classification":"spark","Properties":{"maximizeResourceAllocation":"true"}}]' \
 --scale-down-behavior TERMINATE_AT_TASK_COMPLETION \
