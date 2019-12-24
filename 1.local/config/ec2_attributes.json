@@ -1,7 +1,7 @@
 {
-    "KeyName": "nsides_aws_key_pair",
-    "InstanceProfile": "EMR_EC2_DefaultRole",
-    "SubnetId": "subnet-8e6f06eb",
-    "EmrManagedSlaveSecurityGroup": "sg-023cca5cc8b9dbbf1",
-    "EmrManagedMasterSecurityGroup": "sg-09d359e44fee737c0"
+  "KeyName": "",
+  "InstanceProfile": "EMR_EC2_DefaultRole",
+  "SubnetId": "",
+  "EmrManagedSlaveSecurityGroup": "",
+  "EmrManagedMasterSecurityGroup": ""
 }

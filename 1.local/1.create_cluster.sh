@@ -1,6 +1,7 @@
 #!/bin/bash
 
-AWS_KEY=~/.ssh/nsides_aws_key_pair.pem
+# Set variables using manual configurations
+. ./config/manual_configs.sh
 
 # Activate conda environment (for AWS CLI)
 eval "$(conda shell.bash hook)"
@@ -12,7 +13,7 @@ mkdir -p logs
 # Create EMR cluster using spot instances
 aws emr create-cluster \
 --applications Name=Ganglia Name=Hadoop Name=Spark \
---name 'tlab-hail' \
+--name "'$CLUSTER_NAME'" \
 --service-role EMR_DefaultRole \
 --auto-scaling-role EMR_AutoScaling_DefaultRole \
 --release-label emr-5.28.0 \
@@ -23,9 +24,10 @@ aws emr create-cluster \
 --scale-down-behavior TERMINATE_AT_TASK_COMPLETION \
 --region us-east-1 \
 --enable-debugging \
---log-uri 's3n://tlab-ukbb-bucket/' \
+--log-uri "'$LOG_URI'" \
 > logs/aws_cli_output.json
 
+# Retrieve the cluster ID from AWS CLI output
 CLUSTER_ID="$(jq -r '.ClusterId' logs/aws_cli_output.json)"
 echo "Cluster ID: $CLUSTER_ID\n"
 
@@ -50,4 +52,7 @@ scp -i $AWS_KEY -o 'StrictHostKeyChecking no' -r ../2.remote/ hadoop@$MASTER_DNS
 
 # Install hail and run the notebook
 ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/1.install_hail.sh'
-ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.run_jupyter.sh'
+
+if [ "$run_jupyter" = true ] ; then
+    ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.run_jupyter.sh'
+fi
