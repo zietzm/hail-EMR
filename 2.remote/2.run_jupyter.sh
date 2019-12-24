@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source $HOME/miniconda/etc/profile.d/conda.sh
+conda activate hail-remote
+
 export HAIL_HOME=$(pip show hail | grep Location | awk -F' ' '{print $2 "/hail"}')
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook --no-browser --port=8080'

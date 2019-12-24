@@ -1,5 +1,7 @@
 #!/bin/bash
 
+AWS_KEY=~/.ssh/nsides_aws_key_pair.pem
+
 # Activate conda environment (for AWS CLI)
 eval "$(conda shell.bash hook)"
 conda env create -f environment.yml
