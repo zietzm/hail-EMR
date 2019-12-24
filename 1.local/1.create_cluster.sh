@@ -50,9 +50,18 @@ echo "Master DNS: $MASTER_DNS"
 scp -i $AWS_KEY -o 'StrictHostKeyChecking no' $AWS_KEY hadoop@$MASTER_DNS:/home/hadoop/.ssh/id_rsa
 scp -i $AWS_KEY -o 'StrictHostKeyChecking no' -r ../2.remote/ hadoop@$MASTER_DNS:/home/hadoop/
 
-# Install hail and run the notebook
-ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/1.install_hail.sh'
+# Install hail prerequisites
+ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/1.install_prereqs.sh'
+ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.install_hail.sh'
+
+# Install hail or copy a
+# if [ "$use_precompiled" = true ] ; then
+#     aws s3 mv s3://tlab-ukbb-bucket/hail-jar-files/hail-all-spark.jar hail-all-spark.jar
+#     scp -i $AWS_KEY -o -o 'StrictHostKeyChecking no' hail-all-spark.jar hadoop@$MASTER_DNS:/home/hadoop/
+# else
+#     ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.install_hail.sh'
+# fi
 
 if [ "$run_jupyter" = true ] ; then
-    ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.run_jupyter.sh'
+    ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/3.run_jupyter.sh'
 fi
