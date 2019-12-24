@@ -1,4 +1,4 @@
-name: hail
+name: hail-remote
 channels:
   - conda-forge
 dependencies:

@@ -1,0 +1,37 @@
+[
+    {
+        "InstanceCount": 1,
+        "InstanceGroupType": "CORE",
+        "InstanceType": "m1.large",
+        "Name": "Core-Instance",
+        "BidPrice": "0.01",
+        "EbsConfiguration": {
+            "EbsBlockDeviceConfigs": [
+                {
+                    "VolumeSpecification": {
+                        "SizeInGB": 25,
+                        "VolumeType": "gp2"
+                    },
+                    "VolumesPerInstance": 1
+                }
+            ]
+        }
+    },
+    {
+        "InstanceCount": 1,
+        "InstanceGroupType": "MASTER",
+        "InstanceType": "m1.large",
+        "Name": "Master-Instance",
+        "EbsConfiguration": {
+            "EbsBlockDeviceConfigs": [
+                {
+                    "VolumeSpecification": {
+                        "SizeInGB": 50,
+                        "VolumeType": "gp2"
+                    },
+                    "VolumesPerInstance": 1
+                }
+            ]
+        }
+    }
+]
