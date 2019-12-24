@@ -25,7 +25,7 @@ aws emr create-cluster \
 > logs/aws_cli_output.json
 
 CLUSTER_ID="$(jq -r '.ClusterId' logs/aws_cli_output.json)"
-echo "Cluster ID: $CLUSTER_ID"
+echo "Cluster ID: $CLUSTER_ID\n"
 
 python wait_until_cluster_created.py $CLUSTER_ID
 
