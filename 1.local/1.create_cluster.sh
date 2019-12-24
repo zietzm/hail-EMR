@@ -24,7 +24,7 @@ aws emr create-cluster \
 --scale-down-behavior TERMINATE_AT_TASK_COMPLETION \
 --region us-east-1 \
 --enable-debugging \
---log-uri "'$LOG_URI'" \
+--log-uri $LOG_URI \
 > logs/aws_cli_output.json
 
 # Retrieve the cluster ID from AWS CLI output
