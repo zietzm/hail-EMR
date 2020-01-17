@@ -13,7 +13,7 @@ mkdir -p logs
 # Create EMR cluster using spot instances
 aws emr create-cluster \
 --applications Name=Ganglia Name=Hadoop Name=Spark \
---name "'$CLUSTER_NAME'" \
+--name $CLUSTER_NAME \
 --service-role EMR_DefaultRole \
 --auto-scaling-role EMR_AutoScaling_DefaultRole \
 --release-label emr-5.28.0 \
@@ -53,14 +53,6 @@ scp -i $AWS_KEY -o 'StrictHostKeyChecking no' -r ../2.remote/ hadoop@$MASTER_DNS
 # Install hail prerequisites
 ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/1.install_prereqs.sh'
 ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.install_hail.sh'
-
-# Install hail or copy a
-# if [ "$use_precompiled" = true ] ; then
-#     aws s3 mv s3://tlab-ukbb-bucket/hail-jar-files/hail-all-spark.jar hail-all-spark.jar
-#     scp -i $AWS_KEY -o -o 'StrictHostKeyChecking no' hail-all-spark.jar hadoop@$MASTER_DNS:/home/hadoop/
-# else
-#     ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/2.install_hail.sh'
-# fi
 
 if [ "$run_jupyter" = true ] ; then
     ssh -i $AWS_KEY hadoop@$MASTER_DNS 'sh 2.remote/3.run_jupyter.sh'
