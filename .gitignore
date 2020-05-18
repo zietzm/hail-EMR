@@ -1,0 +1,4 @@
+1.local/logs/
+1.local/connect_to*.sh
+hail-all-spark.jar
+**.ipynb_checkpoints

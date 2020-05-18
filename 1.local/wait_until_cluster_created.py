@@ -30,4 +30,4 @@ while status != 'EMPTY':
         sys.exit(0)
     if status == 'TERMINATED_WITH_ERRORS':
         sys.exit("Cluster creation failed.")
-    time.sleep(10)
+    time.sleep(30)

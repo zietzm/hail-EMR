@@ -1,59 +1,87 @@
-# Running hail on ElasticMapReduce
+# Running hail on AWS EMR
 
-## Minimal usage
+Updated 2020-05-18, by Michael Zietz
 
-Suggested steps to effectively starting a Jupyter notebook.
+Loosely adapted from https://github.com/hms-dbmi/hail-on-AWS-spot-instances
 
-0. Clone this repository
+## Step 0. Get an EC2 key pair (`.pem` file)
 
-```bash
-git clone https://github.com/zietzm/hail-EMR.git
-```
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 
-1. Ensure that you have `conda` installed.
-We recommend [Miniconda](https://docs.conda.io/en/latest/miniconda.html), a lightweight distribution.
+This has to be done online by someone with permissions.
 
-2. Ensure that you have a [configured AWS command line interface](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration).
-This can be checked with `aws configure`.
-If `aws configure` does not work, I suggest:
+## Step 1. Install AWS command line interface (CLI)
+
+[OS-specific instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+On Ubuntu 18.04, I did the following:
 
 ```bash
-conda env create -f 1.local/environment.yml
-conda activate hail-local
-aws configure
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```
 
-3. Setup your manual configurations.
-See [AWS Docs](https://docs.aws.amazon.com/cli/latest/reference/emr/create-cluster.html) for more information on these options.
-    * `1.local/config/manual_configs.sh` - modify the manual configuration options
-    * `1.local/config/` - modify the configuration files there, as needed.
-    `ec2_attributes.json` will need modification.
+```bash
+# Test install
+$ aws --version
+aws-cli/2.0.14 Python/3.7.3 Linux/5.3.0-40-generic botocore/2.0.0dev18
+```
 
-4. Create the cluster.
-Minimally:
+## Step 2. Configure AWS credentials
+
+[Documentation from AWS](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+
+`*`s here hide actual values. Lengths the same, letters and numbers changed.
+
+```bash
+$ aws configure
+AWS Access Key ID [None]: A******************G
+AWS Secret Access Key [None]: Q**********************D/A*************7
+Default region name [None]: us-east-1
+Default output format [None]: json
+```
+
+## Step 3. Configure cluster creation options
+
+[Documentation from AWS](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/emr/create-cluster.html)
+
+A. In `1.local/config/manual_configs.sh`, you'll need to change the name of the EC2 key, and maybe the S3 logging info.
+
+B. In `1.local/config/instance_groups.json`, set details about the cluster you want to create (number of machines, number of CPUs, memory, etc.).
+"Bid price" refers to spot instance bid pricing, which can sometimes be considerably cheaper.
+
+C. `1.local/config/ec2_attributes.json` contains security group and role information.
+Within the Tatonetti lab, there shouldn't be anything you need to change.
+
+## Step 4. Create the cluster
 
 ```bash
 cd 1.local
-sh 1.create_cluster.sh
+bash 1.create_cluster.sh
 ```
+(This assumes you have Python installed)
 
-will create a cluster, install hail, and run a Jupyter notebook.
+In total, this takes ~20-30 minutes.
+Most of that is AWS setting up EMR and compiling hail.
+Once complete, you should see the terminal output from running a Jupyter notebook.
+Make note of (either) URL shown, as the password will be needed to connect.
 
-5. Connect to the notebook, using SSH/port forwarding:
+## Step 5. Connect to the server/notebook
 
-```bash
-MASTER_DNS="$(jq -r '.Cluster.MasterPublicDnsName' 1.local/logs/cluster_description.json)"
-ssh -N -L 8080:localhost:8080 hadoop@$MASTER_DNS
-```
+You should now find two scripts in your current directory: `connect_to_server.sh` and `connect_to_notebook.sh`.
 
-Then in your internet browser go to <https://127.0.0.1:8080>, where a remote Jupyter notebook session can now be reached.
+To run hail interactively in the Jupyter notebook, run `bash connect_to_notebook.sh`.
+Then, in a browser, open the URL shown at the end of the `1.create_cluster.sh` script.
 
-## More maximal usage
+For easy SSH access to the cluster, run `bash connect_to_server.sh`.
 
-To effectively use hail on AWS, you may need to transfer data or to use additional packages, beyond the minimal `conda` environment that will be installed on the EMR cluster.
-Both these tasks can be done easily, provided enough storage space was allocated to the cluster.
-```bash
-scp -i $AWS_KEY $path_to_files hadoop@$MASTER_DNS
-```
+I've added a notebook, `template.ipynb`, which imports hail.
+Running the first cell is a good way to check that everything was installed properly.
 
-In general, simply ssh to the cluster and install or download as necessary.
+## Complete: Using hail
+
+An easy way to load UK Biobank data we have stored in S3 is to pass S3 addresses to functions like `hl.import_bgen`.
+You can also write things to S3 in the same way.
+For performance reasons, it will probably make more sense to deal with hail `MatrixTable`s, so I recommend conversions before running things.
+
+[Hail Documentation](https://hail.is/docs/0.2/index.html)
