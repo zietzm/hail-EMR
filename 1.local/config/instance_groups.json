@@ -1,15 +1,15 @@
 [
     {
-        "InstanceCount": 1,
+        "InstanceCount": 3,
         "InstanceGroupType": "CORE",
         "InstanceType": "m1.large",
         "Name": "Core-Instance",
-        "BidPrice": "0.0175",
+        "BidPrice": "0.02",
         "EbsConfiguration": {
             "EbsBlockDeviceConfigs": [
                 {
                     "VolumeSpecification": {
-                        "SizeInGB": 25,
+                        "SizeInGB": 50,
                         "VolumeType": "gp2"
                     },
                     "VolumesPerInstance": 1
@@ -26,7 +26,7 @@
             "EbsBlockDeviceConfigs": [
                 {
                     "VolumeSpecification": {
-                        "SizeInGB": 50,
+                        "SizeInGB": 100,
                         "VolumeType": "gp2"
                     },
                     "VolumesPerInstance": 1

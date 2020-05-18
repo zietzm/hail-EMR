@@ -1,9 +1,0 @@
-name: hail-local
-channels:
-  - conda-forge
-dependencies:
-  - conda-forge::awscli=1.16.298
-  - conda-forge::boto3=1.10.34
-  - conda-forge::botocore=1.13.34
-  - conda-forge::python=3.7.3
-  # - conda-forge::yq=2.7.1

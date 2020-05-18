@@ -8,9 +8,16 @@ export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook --no-browser --port=8080'
 source ~/.bashrc
 
+# Add hail .jar to the spark configuration (hail asks for this, even though
+# --jars should be sufficient per the Spark documentation), and add other
+# hail options
+sed "/^spark.driver.extraClassPath/ s|$|\:$HAIL_HOME/backend/hail-all-spark.jar|" /etc/spark/conf/spark-defaults.conf |
+sed "/^spark.executor.extraClassPath/ s|$|\:$HAIL_HOME/backend/hail-all-spark.jar|" |
+sed "\$aspark.serializer\torg.apache.spark.serializer.KryoSerializer" |
+sed "\$aspark.kryo.registrator\tis.hail.kryo.HailKryoRegistrator" > /etc/spark/conf/spark-defaults.conf
+
 pyspark \
-  --jars $HAIL_HOME/hail-all-spark.jar \
-  --conf spark.driver.extraClassPath=$HAIL_HOME/hail-all-spark.jar \
-  --conf spark.executor.extraClassPath=./hail-all-spark.jar \
-  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
-  --conf spark.kryo.registrator=is.hail.kryo.HailKryoRegistrator
+  --jars $HAIL_HOME/backend/hail-all-spark.jar
+
+  # hail docs list this as well, but not sure why it'd be necessary
+  # --conf spark.jars=$HAIL_HOME/backend/hail-all-spark.jar
